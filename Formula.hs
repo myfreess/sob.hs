@@ -9,6 +9,7 @@ newtype Label l x = L { getL :: (l, x) }
 
 data Formula f a
     = Var a
+    | NtV a -- (Not (Var x))
     | Const Bool
     | Not (f (Formula f a))
     | And (f (Formula f a)) (f (Formula f a))
@@ -22,13 +23,12 @@ data Atomic a
 data CNF
     = Conj [CNF]
     | Disj [Formula Atomic Int] 
-    -- 只能有Var, Const和Not
-    -- -n表示(Not n)
+    -- 只能有Var, Const和NtV
 
     
 not :: Formula Atomic Int -> Formula Atomic Int
 not (Const b) = Const $ if b then False else True
-not (Var n)   = Var $ -n
+not (Var n)   = NtV n
 
 
 vars :: Ord a => Formula Wrapper a -> Set.Set a
